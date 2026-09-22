@@ -1,36 +1,50 @@
 #include <stdio.h>
 
-int main() {
-    int n = 0;      /* 总人数 */
-    int k = 0;     /* 每数到第 k 个人淘汰 */
-    printf("请输入总人数以及第几人淘汰：");
-	scanf("%d %d",&n,&k);     
-    int people[1000];
+int main()
+{
+	/*C89：变量必须全部声明在最前面，不能夹在语句中间*/
+	int n=0;
+	int k=0;
+	int people[1000];
+	int count=0;
+	int i=0;
+	int j=0;
 
-    /* 初始化：people[0]=1, people[1]=2, ... */
-    int i = 0;
-    for (i = 0; i < n; i++) {
-        people[i] = i + 1;
-    }
+	printf("请输入总人数以及第几人淘汰：");
+	scanf("%d %d",&n,&k);
 
-    int count = n;   /* 当前还剩几个人 */
-           /* 从哪个下标开始报数 */
-    while (count > 1) {
-        /* 从 i 开始数 k 个人，落到的下标是 (i + k - 1) % count */
-        i = (i + k - 1) % count;
+	/*初始化：people[0]=1, people[1]=2, ...*/
+	for(i=0;i<n;i++){
+		people[i]=i+1;
+	}
 
-        /* 淘汰 people[i]：把后面的人整体往前搬一格 */
-        int j = i;
-        for (j = i; j < count - 1; j++) {
-            people[j] = people[j + 1];
-        }
-        count--;
+	count=n;   /*当前还剩几个人*/
+	i=0;       /*从哪个下标开始报数*/
 
-        /* 搬完之后，原来 i+1 位置的人落到了 i 位置，
-           所以下一轮直接从 i 开始数，正好对 */
-    }
+	while(count>1){
+		/*从i开始数k个人，落到的下标是(i+k-1)%count*/
+		i=(i+k-1)%count;
 
-    printf("最后剩下的是第 %d 号\n", people[0]);
-    return 0;
+		/*淘汰people[i]：把后面的人整体往前搬一格*/
+		for(j=i;j<count-1;j++){
+			people[j]=people[j+1];
+		}
+		count--;
+	}
+
+	printf("最后剩下的是第 %d 号\n",people[0]);
+
+	return 0;
 }
 
+/*这个解法：数组搬移法*/
+/*思路是"真的把人从队伍里删掉"，删一个就把后面所有人往前挪一格*/
+
+/*易错点1：C89要求变量声明必须在代码块最前面。我原来把people[1000]、count、j
+            都写在语句中间了，用严格C89编译直接报错*/
+/*易错点2：i=0 这一行千万不能少！上面的初始化for循环跑完后 i 已经等于 n 了。
+            我这次就漏了这一行。对于n=41,k=3碰巧答案还是31（因为(41+2)%41
+            和(0+2)%41一样），但换个位置插代码就错了，纯属运气*/
+/*易错点3：(i+k-1) 里的减1是因为报数从1开始，但数组下标从0开始，差了1*/
+/*易错点4：淘汰一个人要搬最多count个元素，是O(n)；外面套while要淘汰n-1次，
+            所以整体是O(n²)。如果人数到100万，这个解法就废了*/
