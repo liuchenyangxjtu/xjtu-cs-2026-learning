@@ -14,7 +14,7 @@ public class Arithmetic {
         return a * b;
     }
 
-    /** Computes sum of two ints (incorrectly).
+    /** Computes sum of two ints.
      * @param a Value 1
      * @param b Value 2
      * @return Sum of a and b
